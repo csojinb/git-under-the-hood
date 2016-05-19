@@ -6,6 +6,8 @@ slidenumbers: true
 ### Clara Bennett
 ### PyCon 2016
 
+![](images/vasa.jpg)
+
 ---
 # My Goal
 
