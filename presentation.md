@@ -19,3 +19,9 @@ This talk is not:
 * An introduction to git for novice users
 * A tutorial in "advanced" git techniques
 * Related to **GitHub** in any way
+---
+
+## @csojinb
+
+
+![](images/young-clara-sunglasses.jpg)
