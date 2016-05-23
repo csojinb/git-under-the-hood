@@ -162,6 +162,27 @@ This talk is not:
 ![inline fit](images/branches5.png)
 
 ---
+# The Reflog
+
+---
+# What is the reflog?
+
+* The reflog is a **local-only** log of all changes to git _ref(erence)s_, which are pointers to git objects
+    - Refs include: branches, tags, HEAD
+* A freshly cloned repo has an empty reflog
+* The reflog can be accessed by running `git reflog`
+* Or, view the reflog with expanded commit information by running `git log -g`
+
+---
+#
+* Some of the changes recorded in the reflog:
+    - new commits (including merge commits, cherry-picks)
+    - modifications to commits
+    - branch or commit checkouts
+
+
+---
+
 ## @csojinb
 
 
