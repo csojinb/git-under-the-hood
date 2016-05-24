@@ -134,6 +134,7 @@ This talk is not:
 
 ---
 # The Reflog
+## Understand your actions and get out of trouble
 
 ---
 # What is the reflog?
@@ -141,16 +142,36 @@ This talk is not:
 * The reflog is a **local-only** log of all changes to git _ref(erence)s_, which are pointers to git objects
     - Refs include: branches, tags, HEAD
 * A freshly cloned repo has an empty reflog
-* The reflog can be accessed by running `git reflog`
-* Or, view the reflog with expanded commit information by running `git log -g`
+* The reflog can help you understand how your actions affect the commit tree
+* The reflog can be used to **return to a previous state**
 
 ---
-#
+# What can I find in the reflog?
+
 * Some of the changes recorded in the reflog:
     - new commits (including merge commits, cherry-picks)
     - modifications to commits
     - branch or commit checkouts
+* Things that are not recorded in the reflog:
+    - fetches
+    - pushes to a remote
 
+---
+# View the reflog
+
+![left inline fit](images/reflog.png) ![right inline fit](images/git-log-g.png)
+
+---
+# Example
+## Recover a modified commit
+
+![right fit](images/amend-example.png)
+
+* Recall that commit "modification" actually creates a _new_ commit
+* Previous "version" still exists
+* Can create new branch to point to old commit:
+`$ git branch recovery 82d84b2`
+* Same technique can be used to recover a branch that was deleted
 
 ---
 
