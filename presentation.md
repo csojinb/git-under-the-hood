@@ -64,6 +64,37 @@ This talk is not:
 
 ---
 
+# Branches, History, and Navigation
+
+---
+# The Commit "Tree"[^3]
+
+* As previously mentioned, commits know about their parents
+* Together, the commits and parent relations form the commit "tree", or history
+* Multiple commits can have the same parent, which forms a natural "branching" structure
+
+[^3]: Technically, it's not quite a tree, because merge commits have two or more parents. But, it seems easier to think about as an almost-tree than as a rooted connected directed acyclic graph. :sweat_smile:
+
+---
+# Branches Are Just Pointers
+
+* A git branch is represented as a reference to a commit (which defines the "end" of the branch)
+* The branch reference moves forward if new commits are added[^4] while that branch is checked out
+* Deletion of a branch amounts to deletion of _the pointer only_: the commits are still in the database
+
+[^4]: This is in contrast to tags (similarly just pointers to commits), which stay put unless explicitly moved.
+
+---
+# Where am I?
+
+* The `HEAD` reference determines what is "checked out"
+* If a branch is checked out, `HEAD` points to the branch ref
+* The "unattached HEAD" state occurs when `HEAD` points directly to a commit
+* Either way, the associated snapshot is identical[^5] to the state of the working directory
+
+[^5]: Assuming that the working directory is clean, that is.
+
+---
 ## @csojinb
 
 
