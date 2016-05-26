@@ -95,6 +95,41 @@ This talk is not:
 [^5]: Assuming that the working directory is clean, that is.
 
 ---
+```
+[~/dev/repo]$ git clone url .
+```
+
+![inline fit](images/branches1.png)
+
+---
+```
+[~/dev/repo](master)$ git checkout -b topic
+```
+
+![inline fit](images/branches2.png)
+
+---
+```
+[~/dev/repo](topic)$ git commit
+```
+
+![inline fit](images/branches3.png)
+
+---
+```
+[~/dev/repo](topic)$ git commit
+```
+
+![inline fit](images/branches4.png)
+
+---
+```
+[~/dev/repo](topic)$ git checkout master; git pull
+```
+
+![inline fit](images/branches5.png)
+
+---
 ## @csojinb
 
 
