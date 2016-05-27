@@ -62,7 +62,18 @@ This talk is not:
 * Git does not directly save any _actions_ that you took, only the state
 * Differences are _derived_ by comparing snapshots
 * Actions are _inferred_
-* Ex: git recognizes the rename because the file contents is the same
+* Example (right): git recognizes the rename because the file contents is the same, equivalent to `git mv`
+
+---
+## Important implication!
+
+* Git's ability to track a file's history[^3] depends on the file being recognizably the same file between commit snapshots
+* i.e. the following may break the file history:
+    `$ git mv file.py other.py`
+    _<make lots of changes to `other.py`>_
+    `$ git add --all; git commit`
+
+[^3]: You may be taking advantage of this feature in, say, GitHub, even if you aren't using it locally.
 
 ---
 
@@ -71,22 +82,22 @@ This talk is not:
 ![](images/trees.jpg)
 
 ---
-# The Commit "Tree"[^3]
+# The Commit "Tree"[^4]
 
 * As previously mentioned, commits know about their parents
 * Together, the commits and parent relations form the commit "tree", or history
 * Multiple commits can have the same parent, which forms a natural "branching" structure
 
-[^3]: Technically, it's not quite a tree, because merge commits have two or more parents. But, it seems easier to think about as an almost-tree than as a rooted connected directed acyclic graph. :sweat_smile:
+[^4]: Technically, it's not quite a tree, because merge commits have two or more parents. But, it seems easier to think about as an almost-tree than as a rooted connected directed acyclic graph. :sweat_smile:
 
 ---
 # Branches Are Just Pointers
 
 * A git branch is represented as a reference to a commit (which defines the "end" of the branch)
-* The branch reference moves forward if new commits are added[^4] while that branch is checked out
+* The branch reference moves forward if new commits are added[^5] while that branch is checked out
 * Deletion of a branch amounts to deletion of _the pointer only_: the commits are still in the database
 
-[^4]: This is in contrast to tags (similarly just pointers to commits), which stay put unless explicitly moved.
+[^5]: This is in contrast to tags (similarly just pointers to commits), which stay put unless explicitly moved.
 
 ---
 # Where am I?
@@ -94,9 +105,9 @@ This talk is not:
 * The `HEAD` reference determines what is "checked out"
 * If a branch is checked out, `HEAD` points to the branch ref
 * The "unattached HEAD" state occurs when `HEAD` points directly to a commit
-* Either way, the associated snapshot is identical[^5] to the state of the working directory
+* Either way, the associated snapshot is identical[^6] to the state of the working directory
 
-[^5]: Assuming that the working directory is clean, that is.
+[^6]: Assuming that the working directory is clean, that is.
 
 ---
 ```
