@@ -27,17 +27,25 @@ This talk is not:
 ![](images/dunes.jpg)
 
 ---
-# The Snapshot
+# The Staging Index
+## (i.e. proposed next commit)
+
+* The staging index is a place to build the next commit
+* On checkout, the staging index is populated to reflect the state of the checked-out commit
+* As new changes are staged, the index is updated
+* On commit, the index becomes the commit snapshot
+
+---
+# The Snapshots
 ## (i.e. the content)
 
-* When changes are staged, each affected file and directory entity is check-summed, compressed, and stored separately[^1]
-* Directory entities (including the project root) point to the SHA-1 checksums of the files and directories they contain
-
+* To store staged changes, each affected file and directory entity is check-summed and saved separately
+* These "snapshots" are efficiently stored copies of entire files[^1], or pointers to snapshots of contained files
+* Snapshots can be recovered by SHA-1 checksum
 
 [^1]: Eventually, git will compress versions of the same file together to save space when necessary, e.g. if you want to push to a remote. But looking up the file by checksum will still return you the complete file.
 
 ---
-
 # The Commit
 ## (i.e. content + meta-data)
 
@@ -47,7 +55,7 @@ This talk is not:
     - `<commit>^X` accesses the X'th parent
     - `<commit>~X` accesses the X'th-gen ancestor
 
-[^2]: Thus, commit objects have access to the _complete state_ of the project at that point in history.
+[^2]: This snapshot is built from the staging index. Thus, a commit has access to the _complete project state_ at that point in history.
 
 ---
 ## Visualize commit storage
