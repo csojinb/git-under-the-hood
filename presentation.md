@@ -50,8 +50,9 @@ This talk is not:
 [^2]: Thus, commit objects have access to the _complete state_ of the project at that point in history.
 
 ---
+## Visualize commit storage
 
-![inline fit](images/two-commits-terminal.png) ![inline fit](images/two-commits.png)
+![inline fit](images/two-commits.png)
 
 ---
 ![right fit](images/mv-example.png)
