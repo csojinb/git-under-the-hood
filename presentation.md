@@ -24,7 +24,7 @@ This talk is not:
 
 # What is stored when you commit?
 
-![](images/trees.jpg)
+![](images/dunes.jpg)
 
 ---
 # The Snapshot
@@ -65,6 +65,8 @@ This talk is not:
 ---
 
 # Branches, History, and Navigation
+
+![](images/trees.jpg)
 
 ---
 # The Commit "Tree"[^3]
