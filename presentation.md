@@ -41,10 +41,11 @@ This talk is not:
 # The Commit
 ## (i.e. content + meta-data)
 
-* Pointer a top-level directory snapshot[^2]
-* Commit message
-* Author and committer
-* Pointer(s) to parent commit(s)
+* Content: pointer to project root snapshot[^2]
+* Meta-Data: Commit message, author and committer
+* History: pointer(s) to parent commit(s)
+    - `<commit>^X` accesses the X'th parent
+    - `<commit>~X` accesses the X'th-gen ancestor
 
 [^2]: Thus, commit objects have access to the _complete state_ of the project at that point in history.
 
