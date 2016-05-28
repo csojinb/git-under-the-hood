@@ -63,6 +63,15 @@ This talk is not:
 ![inline fit](images/two-commits.png)
 
 ---
+## Example: Understanding `git reset` options
+
+`git reset [<mode>] HEAD~1`
+
+* **mode = soft:** moves branch back to first parent; index and working directory unchanged _(changes remain "staged")_
+* **default (mode = mixed):** moves branch back to parent; staging index reset to parent _(changes "unstaged")_
+* **hard:** moves branch back to parent; index and working directory reset _(commit and changes erased entirely)_
+
+---
 ![right fit](images/mv-example.png)
 
 # Representing Changes
