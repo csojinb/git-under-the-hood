@@ -22,43 +22,75 @@ This talk is not:
 
 ---
 
-# What is stored when you commit?
+# What does git store when you commit?
 
 ![](images/dunes.jpg)
 
 ---
-# The Staging Index
-## (i.e. proposed next commit)
+## Core Concept: History as Snapshots
 
-* The staging index is a place to build the next commit
-* On checkout, the staging index is populated to reflect the state of the checked-out commit
-* As new changes are staged, the index is updated
-* On commit, the index becomes the commit snapshot
+* To understand how git stores your commits, it's useful to understand the central "philosophy"
+* Git "thinks" about version history as a series of **snapshots**, rather than a series of changesets
+* A **snapshot** is a complete copy[^1] of the project at a particular point in history
 
----
-# The Snapshots
-## (i.e. the content)
-
-* To store staged changes, each affected file and directory entity is check-summed and saved separately
-* These "snapshots" are efficiently stored copies of entire files[^1], or pointers to snapshots of contained files
-* Snapshots can be recovered by SHA-1 checksum
-
-[^1]: Eventually, git will compress versions of the same file together to save space when necessary, e.g. if you want to push to a remote. But looking up the file by checksum will still return you the complete file.
+[^1]: Unchanged files are not stored multiple times. And, eventually, git will compress versions of the same file together to save space when necessary, e.g. if you want to push to a remote. But the snapshot still decompresses to a complete project copy.
 
 ---
-# The Commit
-## (i.e. content + meta-data)
+![right fit](images/mv-example.png)
 
-* Content: pointer to project root snapshot[^2]
-* Meta-Data: Commit message, author and committer
-* History: pointer(s) to parent commit(s)
-    - `<commit>^X` accesses the X'th parent
-    - `<commit>~X` accesses the X'th-gen ancestor
+# Representing Changes
 
-[^2]: This snapshot is built from the staging index. Thus, a commit has access to the _complete project state_ at that point in history.
+* Git does not directly save any **actions** that you took, only the **state**
+* Differences are **derived** by comparing snapshots
+* Actions are **inferred**
+* Example (right): git recognizes the rename because the **file contents** is the same
+    * Equivalent to `git mv`
+## Important implication!
+
+* Git's ability to track a file's history[^2] depends on the file being recognizably the same file between commit snapshots
+* i.e. the following may break the file history:
+
+    `$ git mv file.py other.py`
+
+    _<make lots of changes to `other.py`>_
+
+    `$ git add --all; git commit`
+
+[^2]: You may be taking advantage of this feature in, say, GitHub, even if you aren't using it locally.
 
 ---
-## Visualize commit storage
+# Snapshot Storage
+
+* A file snapshot is stored as a text blob, and a directory snapshot is represented as a "tree" object
+* Each snapshot is check-summed and stored by SHA-1 value
+* Directory trees point to the SHAs of files and directories they contain
+* The project snapshot is just the "tree" for the project root directory
+
+![right fit](images/snapshot.png)
+
+---
+# Building A Commit
+
+* To make a commit, first you need to stage some changes
+* The staging area[^3] is just another project snapshot tree
+* As changes are staged, new snapshots are created of the affected files/directories, and the staging area is updated
+* On commit, the staging area becomes the commit snapshot
+
+[^3]: Sometimes referred to as the "index".
+
+---
+# The Meta-Data
+
+* The final commit object contains a pointer[^4] to the **project snapshot** (the content) and some **meta-data**
+* The meta-data includes the author, the commit message, and pointer(s) to the **parent commit(s)**[^5]
+* Note that if either the content or the meta-data is amended, the new commit will have a different SHA checksum value
+
+[^4]: The "pointer" is SHA of the project snapshot
+
+[^5]: The initial commit has no parents, and merge commits have two or more.
+
+---
+## Visualizing commit storage
 
 ![inline fit](images/two-commits.png)
 
@@ -72,49 +104,27 @@ This talk is not:
 * **hard:** moves branch back to parent; index and working directory reset _(commit and changes erased entirely)_
 
 ---
-![right fit](images/mv-example.png)
-
-# Representing Changes
-
-* Git does not directly save any _actions_ that you took, only the state
-* Differences are _derived_ by comparing snapshots
-* Actions are _inferred_
-* Example (right): git recognizes the rename because the file contents is the same, equivalent to `git mv`
-
----
-## Important implication!
-
-* Git's ability to track a file's history[^3] depends on the file being recognizably the same file between commit snapshots
-* i.e. the following may break the file history:
-    `$ git mv file.py other.py`
-    _<make lots of changes to `other.py`>_
-    `$ git add --all; git commit`
-
-[^3]: You may be taking advantage of this feature in, say, GitHub, even if you aren't using it locally.
-
----
-
 # Branches, History, and Navigation
 
 ![](images/trees.jpg)
 
 ---
-# The Commit "Tree"[^4]
+# The Commit "Tree"[^6]
 
 * As previously mentioned, commits know about their parents
 * Together, the commits and parent relations form the commit "tree", or history
 * Multiple commits can have the same parent, which forms a natural "branching" structure
 
-[^4]: Technically, it's not quite a tree, because merge commits have two or more parents. But, it seems easier to think about as an almost-tree than as a rooted connected directed acyclic graph. :sweat_smile:
+[^6]: Technically, it's not quite a tree, because merge commits have two or more parents. But, it seems easier to think about as an almost-tree than as a rooted connected directed acyclic graph. :sweat_smile:
 
 ---
 # Branches Are Just Pointers
 
 * A git branch is represented as a reference to a commit (which defines the "end" of the branch)
-* The branch reference moves forward if new commits are added[^5] while that branch is checked out
+* The branch reference moves forward if new commits are added[^7] while that branch is checked out
 * Deletion of a branch amounts to deletion of _the pointer only_: the commits are still in the database
 
-[^5]: This is in contrast to tags (similarly just pointers to commits), which stay put unless explicitly moved.
+[^7]: This is in contrast to tags (similarly just pointers to commits), which stay put unless explicitly moved.
 
 ---
 # Where am I?
@@ -122,9 +132,9 @@ This talk is not:
 * The `HEAD` reference determines what is "checked out"
 * If a branch is checked out, `HEAD` points to the branch ref
 * The "unattached HEAD" state occurs when `HEAD` points directly to a commit
-* Either way, the associated snapshot is identical[^6] to the state of the working directory
+* Either way, the associated snapshot is identical[^8] to the state of the working directory
 
-[^6]: Assuming that the working directory is clean, that is.
+[^8]: Assuming that the working directory is clean, that is.
 
 ---
 ```
