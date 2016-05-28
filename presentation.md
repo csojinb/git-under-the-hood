@@ -41,9 +41,12 @@ This talk is not:
 
 * To store staged changes, each affected file and directory entity is check-summed and saved separately
 * These "snapshots" are efficiently stored copies of entire files[^1], or pointers to snapshots of contained files
-* Snapshots can be recovered by SHA-1 checksum
+* Snapshots can be retrieved by SHA-1 checksum
 
 [^1]: Eventually, git will compress versions of the same file together to save space when necessary, e.g. if you want to push to a remote. But looking up the file by checksum will still return you the complete file.
+
+---
+## commit SHAs change if any part of the commit changes
 
 ---
 # The Commit

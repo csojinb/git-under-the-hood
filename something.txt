@@ -1,0 +1,5 @@
+* What is stored when I make a commit?
+* What happens when I branch?
+* Why is branching cheap?
+* How do checkouts work?
+* How can I get myself out of trouble?
