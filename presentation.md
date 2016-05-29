@@ -1,7 +1,7 @@
 slidenumbers: true
 
-# Git
-## A Peek Under the Hood
+# git
+## a peek under the hood
 
 ### Clara Bennett
 ### PyCon 2016
@@ -30,7 +30,7 @@ This talk is not:
 ## Core Concept: History as Snapshots
 
 * To understand how git stores your commits, it's useful to understand the central "philosophy"
-* Git "thinks" about version history as a series of **snapshots**, rather than a series of changesets
+* Git "thinks" about version history as a series of **snapshots**, rather than a series of deltas
 * A **snapshot** is a complete copy[^1] of the project at a particular point in history
 
 [^1]: Unchanged files are not stored multiple times. And, eventually, git will compress versions of the same file together to save space when necessary, e.g. if you want to push to a remote. But the snapshot still decompresses to a complete project copy.
@@ -96,6 +96,7 @@ This talk is not:
 
 ---
 ## Example: Understanding `git reset` options
+## Slated for deletion, or at least cleanup
 
 `git reset [<mode>] HEAD~1`
 
@@ -104,27 +105,78 @@ This talk is not:
 * **hard:** moves branch back to parent; index and working directory reset _(commit and changes erased entirely)_
 
 ---
-# Branches, History, and Navigation
+# Why are branches "cheap"?
 
 ![](images/trees.jpg)
 
 ---
-# The Commit "Tree"[^6]
+## Branching (structure) comes for free
 
-* As previously mentioned, commits know about their parents
-* Together, the commits and parent relations form the commit "tree", or history
-* Multiple commits can have the same parent, which forms a natural "branching" structure
+![right fit](images/history.png)
 
-[^6]: Technically, it's not quite a tree, because merge commits have two or more parents. But, it seems easier to think about as an almost-tree than as a rooted connected directed acyclic graph. :sweat_smile:
+* Together, commits and parent relations form the git history DAG[^6]
+* Multiple commits can share a parent => natural "branching" structure
+* Could theoretically manage divergent version paths without an explicit "branch" concept[^7]
+
+[^6]: It can be further specified as a rooted connected directed acyclic graph. :open_mouth: Note that the history is _not_ a tree because commits can have multiple parents, but it is tree-like in other respects.
+
+[^7]: It would involve manually tracking commit SHAs, though. :scream:
 
 ---
-# Branches Are Just Pointers
+## A git branch (object) is just a pointer
 
-* A git branch is represented as a reference to a commit (which defines the "end" of the branch)
-* The branch reference moves forward if new commits are added[^7] while that branch is checked out
-* Deletion of a branch amounts to deletion of _the pointer only_: the commits are still in the database
+![right fit](images/history-branches.png)
 
-[^7]: This is in contrast to tags (similarly just pointers to commits), which stay put unless explicitly moved.
+* Git's "branch" object (stored as reference to a commit SHA) affords two major conveniences:
+    * Nice name for checkouts, etc
+    * The checked-out branch moves forward with each new commit
+* Note: the **master** branch is (technically) the same as any other[^8]
+
+[^8]: Everyone has one because the branch created by `git init` is called "master" by default.
+
+---
+## Ergo, branches are cheap
+
+* Creating a branch == creating a SHA reference: cheap!
+* Because git only creates new file snapshots for modified files, they are also cheap to maintain[^9]
+* Deleting a branch deletes the ref only: also cheap!
+    - Bonus: the commits still exist and [can be recovered](#recover-branch)
+
+[^9]: Relative to other VCSs that maintain an entirely seperate project copy per branch.
+
+---
+## Merges are (fairly) easy
+
+* To merge, git compares branches to their best **merge base**
+* The merge base (most recent common ancestor) is easily determined from the commit graph
+* Unlike a simple 3-point merge, git preserves granular history info by replaying commits from one branch onto the other
+* This allows git to correctly handle many tricky merge situations, e.g. file renames
+
+---
+## Example merge scenario
+
+![right fit](images/merge-base.png)
+
+To merge `bar` into `foo`:
+    ```
+    $ git checkout foo
+    $ git merge bar
+    ```
+
+* Compute diffs `(C - B)` and `(D - C)`
+* Apply diffs in order onto `E`
+* Turn the result into a merge commit
+
+---
+# Homeless information!
+
+* The checked-out branch moves forward when a new commit is made[^10]
+
+
+[^10]: This is in contrast to tags (similarly just pointers to commits), which stay put unless explicitly moved.
+
+---
+# How do checkouts work?
 
 ---
 # Where am I?
@@ -132,9 +184,9 @@ This talk is not:
 * The `HEAD` reference determines what is "checked out"
 * If a branch is checked out, `HEAD` points to the branch ref
 * The "unattached HEAD" state occurs when `HEAD` points directly to a commit
-* Either way, the associated snapshot is identical[^8] to the state of the working directory
+* Either way, the associated snapshot is identical[^11] to the state of the working directory
 
-[^8]: Assuming that the working directory is clean, that is.
+[^11]: Assuming that the working directory is clean, that is.
 
 ---
 ```
@@ -202,7 +254,10 @@ This talk is not:
 
 ---
 # Example
-## Recover a modified commit
+## Recover a deleted branch
+# NEEDS FIXING
+
+<a name="recover-branch"/>
 
 ![right fit](images/amend-example.png)
 
