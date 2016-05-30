@@ -95,16 +95,6 @@ This talk is not:
 ![inline fit](images/two-commits.png)
 
 ---
-## Example: Understanding `git reset` options
-## Slated for deletion, or at least cleanup
-
-`git reset [<mode>] HEAD~1`
-
-* **mode = soft:** moves branch back to first parent; index and working directory unchanged _(changes remain "staged")_
-* **default (mode = mixed):** moves branch back to parent; staging index reset to parent _(changes "unstaged")_
-* **hard:** moves branch back to parent; index and working directory reset _(commit and changes erased entirely)_
-
----
 # Why are branches "cheap"?
 
 ![](images/trees.jpg)
@@ -129,20 +119,22 @@ This talk is not:
 
 * Git's "branch" object (stored as reference to a commit SHA) affords two major conveniences:
     * Nice name for checkouts, etc
-    * The checked-out branch moves forward with each new commit
-* Note: the **master** branch is (technically) the same as any other[^8]
+    * The checked-out branch moves forward with each new commit[^8]
+* Note: the **master** branch is (technically) the same as any other[^9]
 
-[^8]: Everyone has one because the branch created by `git init` is called "master" by default.
+[^8]: Unlike tags (similarly just pointers), which stay put unless explicitly moved.
+
+[^9]: The branch created by `git init` is called "master" by default.
 
 ---
 ## Ergo, branches are cheap
 
 * Creating a branch == creating a SHA reference: cheap!
-* Because git only creates new file snapshots for modified files, they are also cheap to maintain[^9]
+* Because git only creates new file snapshots for modified files, they are also cheap to maintain[^10]
 * Deleting a branch deletes the ref only: also cheap!
     - Bonus: the commits still exist and [can be recovered](#recover-branch)
 
-[^9]: Relative to other VCSs that maintain an entirely seperate project copy per branch.
+[^10]: Relative to other VCSs that maintain an entirely seperate project copy per branch.
 
 ---
 ## Merges are (fairly) easy
@@ -168,60 +160,44 @@ To merge `bar` into `foo`:
 * Turn the result into a merge commit
 
 ---
-# Homeless information!
-
-* The checked-out branch moves forward when a new commit is made[^10]
-
-
-[^10]: This is in contrast to tags (similarly just pointers to commits), which stay put unless explicitly moved.
-
----
 # How do checkouts work?
 
----
-# Where am I?
-
-* The `HEAD` reference determines what is "checked out"
-* If a branch is checked out, `HEAD` points to the branch ref
-* The "unattached HEAD" state occurs when `HEAD` points directly to a commit
-* Either way, the associated snapshot is identical[^11] to the state of the working directory
-
-[^11]: Assuming that the working directory is clean, that is.
+![](images/snitches.jpg)
 
 ---
-```
-[~/dev/repo]$ git clone url .
-```
+# Checkouts: HEAD
 
-![inline fit](images/branches1.png)
+![right fit](images/HEAD1.png)
 
----
-```
-[~/dev/repo](master)$ git checkout -b topic
-```
+* The HEAD reference determines "where you are" in the commit graph
+* HEAD can point either to a branch reference or directly to a commit[^11]
+* Example (right): The master branch is currently "checked out"
 
-![inline fit](images/branches2.png)
+[^11]: This is the "unattached HEAD" state.
 
 ---
-```
-[~/dev/repo](topic)$ git commit
-```
+# Checkouts: Switching branches
 
-![inline fit](images/branches3.png)
+![right fit](images/HEAD2.png)
+
+`$ git checkout topic`
+
+* Modify HEAD to point to `topic`
+* Copy `commit C`'s snapshot tree to the staging area
+* Decompress the files in the project snapshot and copy them to the working directory[^12]
+
+[^12]: This could clobber uncommitted changes in your working directory, which is why git may throw an error if you try to do a checkout with a dirty working directory.
 
 ---
-```
-[~/dev/repo](topic)$ git commit
-```
+## Resets are similar
 
-![inline fit](images/branches4.png)
+![right fit](images/HEAD3.png)
 
----
-```
-[~/dev/repo](topic)$ git checkout master; git pull
-```
+`git reset --<mode> master`
 
-![inline fit](images/branches5.png)
+* A **hard** reset does the same 3 steps as a checkout, except that the pointer that moves is the **branch**, rather than HEAD
+* A default (mode=**mixed**) reset skips the working directory overwrite
+* A **soft** reset also skips the staging area overwrite
 
 ---
 # The Reflog
