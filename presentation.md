@@ -53,6 +53,8 @@ theme: Next
 * Differences are **derived** by comparing snapshots
 * Actions are **inferred**
 * Example (right): git recognizes the rename because the **file content** is the same
+
+---
 ## Important implication!
 
 * Git's ability to track a file's history[^2] depends on the file being recognizably the same file between commit snapshots
