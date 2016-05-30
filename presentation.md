@@ -1,4 +1,5 @@
 slidenumbers: true
+theme: Next
 
 # Git
 ## a peek under the hood
