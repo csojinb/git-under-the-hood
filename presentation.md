@@ -4,21 +4,25 @@ slidenumbers: true
 ## a peek under the hood
 
 ### Clara Bennett
+### [@csojinb](http://twitter.com/csojinb)
+--
 ### PyCon 2016
 
 ![](images/vasa.jpg)
 
 ---
-# My Goal
+# Git: powerful, but leaky
 
-_To improve your mental model of **git** and give you tools to continue learning and become a more effective git user._
+* Git has some leaky abstractions, making it a difficult tool to master without a solid mental model of its mechanics
+* Fear of losing work is a barrier to learning/experimentation
+* Git prides itself on being nearly append-only, but mistake recovery again requires some understanding of the internals
 
+_This talk introduces internal mechanics relevant to common git sticking points, for more effective future use._
 
-This talk is not:
-
-* An introduction to git for novice users
-* A tutorial in "advanced" git techniques
-* A deep dive into git internals or "plumbing" commands
+^This talk is not:
+^* An introduction to git for novice users
+^* A tutorial in "advanced" git techniques
+^* A deep dive into git internals or "plumbing" commands
 
 ---
 
@@ -259,6 +263,17 @@ To merge `bar` into `foo`:
 * With the defaults, reflog expiry unlikely to cause issues
 
 [^15]: So, a small repo that only you contribute to could still have commits from old branches from a year ago, for example.
+
+---
+# What next?
+
+* Go forth and git greatly!
+* This presentation can be found at
+    [github.com/csojinb/git-under-the-hood](github.com/csojinb/git-under-the-hood)
+* Scott Chacon's book [Pro Git](https://git-scm.com/book/en/v2) (free!) is an excellent resource
+    * To learn more about git internals in particular, check out [Chapter 10](https://git-scm.com/book/en/v2/Git-Internals-Plumbing-and-Porcelain) and take a swim through your `.git` directory
+
+
 
 ---
 
