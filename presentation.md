@@ -202,17 +202,20 @@ To merge `bar` into `foo`:
 * A **soft** reset also skips the staging area overwrite
 
 ---
-# The Reflog
-## Understand your actions and get out of trouble
+# How can I get myself out of trouble?
+
+![](images/cove.jpg)
 
 ---
-# What is the reflog?
+# Meet the reflog
+## Your new best friend
 
-* The reflog is a **local-only** log of all changes to git _ref(erence)s_, which are pointers to git objects
-    - Refs include: branches, tags, HEAD
-* A freshly cloned repo has an empty reflog
-* The reflog can help you understand how your actions affect the commit tree
-* The reflog can be used to **return to a previous state**
+* The reflog is a **local-only** log of all changes to git **ref(erence)s**, including branches, tags, HEAD, stashes
+* By default, `git reflog` shows you a log of HEAD changes
+* `git reflog <ref name>` to view changes to another ref
+* The reflog can be used to **return to a previous state**[^13]
+
+[^13]: A previous **committed** state. If you accidentally deleted uncommitted work, no dice. So, commit early and often!
 
 ---
 # What can I find in the reflog?
@@ -221,29 +224,43 @@ To merge `bar` into `foo`:
     - new commits (including merge commits, cherry-picks)
     - modifications to commits
     - branch or commit checkouts
-* Things that are not recorded in the reflog:
-    - fetches
-    - pushes to a remote
+* Fetches or pushes to a remote are not recorded in the reflog, because they don't affect your local repository copy
 
 ---
-# View the reflog
+## Usecase
+### Roll back to a previous state
 
-![left inline fit](images/reflog.png) ![right inline fit](images/git-log-g.png)
+![right fit](images/head-rollback.png)
+
+* Use the reflog to immediately roll back from a git mistake (e.g. botched rebase, pulled instead of fetched)[^14]
+* Identify the HEAD reference **before** the error, then do a hard reset to it
+* Ex: `git reset --hard HEAD@{1}`
+
+[^14]: You can even use this to recover from a bad reflog reset!
 
 ---
-# Example
-## Recover a deleted branch
-# NEEDS FIXING
+## Usecase
+### Recover a deleted branch
 
 <a name="recover-branch"/>
 
-![right fit](images/amend-example.png)
+![right fit](images/recover-branch.png)
 
-* Recall that commit "modification" actually creates a _new_ commit
-* Previous "version" still exists
-* Can create new branch to point to old commit:
-`$ git branch recovery 82d84b2`
-* Same technique can be used to recover a branch that was deleted
+* We can't use the branch-specific reflog because it was deleted too
+* View detailed commit information in the HEAD log with `git log -g`
+* Find the SHA of the former branch tip and remake the branch:
+    `$ git branch recovery 4c7146f`
+* This technique can also be used to recover modified commits
+
+---
+## Off-branch commits aren't stored forever
+
+* Git is conservative: it keeps commits reachable by any reference, including the reflog
+* Default reflog expire time is 90 days
+* Unless you explicitly trigger garbage collection, "expired" reflog items are only cleaned up if there's a space issue[^15]
+* With the defaults, reflog expiry unlikely to cause issues
+
+[^15]: So, a small repo that only you contribute to could still have commits from old branches from a year ago, for example.
 
 ---
 
