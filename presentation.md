@@ -13,11 +13,14 @@ slidenumbers: true
 ---
 # Git: powerful, but leaky
 
-* Git has some leaky abstractions, making it a difficult tool to master without a solid mental model of its mechanics
+* Like all abstractions, git leaks
+* Difficult to master without a solid mental model
 * Fear of losing work is a barrier to learning/experimentation
-* Git prides itself on being nearly append-only, but mistake recovery again requires some understanding of the internals
+* Taking advantage of git's data-hoarding tendencies requires understanding of how the data is stored
 
-_This talk introduces internal mechanics relevant to common git sticking points, for more effective future use._
+**Solution:** _Gain leverage by learning some internal mechanics_
+
+^A little goes a long way!
 
 ^This talk is not:
 ^* An introduction to git for novice users
@@ -47,8 +50,7 @@ _This talk introduces internal mechanics relevant to common git sticking points,
 * Git does not directly save any **actions** that you took, only the **state**
 * Differences are **derived** by comparing snapshots
 * Actions are **inferred**
-* Example (right): git recognizes the rename because the **file contents** is the same
-    * Equivalent to `git mv`
+* Example (right): git recognizes the rename because the **file content** is the same
 ## Important implication!
 
 * Git's ability to track a file's history[^2] depends on the file being recognizably the same file between commit snapshots
@@ -60,7 +62,7 @@ _This talk introduces internal mechanics relevant to common git sticking points,
 
     `$ git add --all; git commit`
 
-[^2]: You may be taking advantage of this feature in, say, GitHub, even if you aren't using it locally.
+[^2]: Important even if you don't directly use this feature because it affects git's ability to merge intelligently.
 
 ---
 # Snapshot storage
@@ -124,7 +126,7 @@ _This talk introduces internal mechanics relevant to common git sticking points,
 * Git's "branch" object (stored as reference to a commit SHA) affords two major conveniences:
     * Nice name for checkouts, etc
     * The checked-out branch moves forward with each new commit[^8]
-* Note: the **master** branch is (technically) the same as any other[^9]
+* Note: there is nothing special about **master**: it's a regular branch[^9]
 
 [^8]: Unlike tags (similarly just pointers), which stay put unless explicitly moved.
 
@@ -135,7 +137,7 @@ _This talk introduces internal mechanics relevant to common git sticking points,
 
 * Creating a branch == creating a SHA reference: cheap!
 * Because git only creates new file snapshots for modified files, they are also cheap to maintain[^10]
-* Deleting a branch deletes the ref only: also cheap!
+* Deleting a branch only deletes the reference: also cheap!
     - Bonus: the commits still exist and [can be recovered](#recover-branch)
 
 [^10]: Relative to other VCSs that maintain an entirely seperate project copy per branch.
@@ -159,9 +161,11 @@ To merge `bar` into `foo`:
     $ git merge bar
     ```
 
+* Determine merge base
 * Compute diffs `(C - B)` and `(D - C)`
 * Apply diffs in order onto `E`
 * Turn the result into a merge commit
+* Move branch `foo` to merge commit
 
 ---
 # How do checkouts work?
@@ -193,7 +197,7 @@ To merge `bar` into `foo`:
 [^12]: This could clobber uncommitted changes in your working directory, which is why git may throw an error if you try to do a checkout with a dirty working directory.
 
 ---
-## Resets are similar
+## Resets are like checkouts
 
 ![right fit](images/HEAD3.png)
 
@@ -212,12 +216,12 @@ To merge `bar` into `foo`:
 # Meet the reflog
 ## Your new best friend
 
-* The reflog is a **local-only** log of all changes to git **ref(erence)s**, including branches, tags, HEAD, stashes
+* The reflog is a **local-only** log of all changes to git **refs**, including branches, tags, HEAD, stashes
 * By default, `git reflog` shows you a log of HEAD changes
 * `git reflog <ref name>` to view changes to another ref
 * The reflog can be used to **return to a previous state**[^13]
 
-[^13]: A previous **committed** state. If you accidentally deleted uncommitted work, no dice. So, commit early and often!
+[^13]: A previous **committed** state. If you accidentally deleted uncommitted work, no dice. Commit early and often!
 
 ---
 # What can I find in the reflog?
