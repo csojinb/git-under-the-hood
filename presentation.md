@@ -1,6 +1,6 @@
 slidenumbers: true
 
-# git
+# Git
 ## a peek under the hood
 
 ### Clara Bennett
@@ -31,7 +31,7 @@ _This talk introduces internal mechanics relevant to common git sticking points,
 ![](images/dunes.jpg)
 
 ---
-## Core Concept: History as Snapshots
+## Core concept: History as snapshots
 
 * To understand how git stores your commits, it's useful to understand the central "philosophy"
 * Git "thinks" about version history as a series of **snapshots**, rather than a series of deltas
@@ -42,7 +42,7 @@ _This talk introduces internal mechanics relevant to common git sticking points,
 ---
 ![right fit](images/mv-example.png)
 
-# Representing Changes
+# Representing changes
 
 * Git does not directly save any **actions** that you took, only the **state**
 * Differences are **derived** by comparing snapshots
@@ -65,7 +65,7 @@ _This talk introduces internal mechanics relevant to common git sticking points,
 [^2]: You may be taking advantage of this feature in, say, GitHub, even if you aren't using it locally.
 
 ---
-# Snapshot Storage
+# Snapshot storage
 
 * A file snapshot is stored as a text blob, and a directory snapshot is represented as a "tree" object
 * Each snapshot is check-summed and stored by SHA-1 value
@@ -75,7 +75,7 @@ _This talk introduces internal mechanics relevant to common git sticking points,
 ![right fit](images/snapshot.png)
 
 ---
-# Building A Commit
+# Building a commit
 
 * To make a commit, first you need to stage some changes
 * The staging area[^3] is just another project snapshot tree
@@ -85,7 +85,7 @@ _This talk introduces internal mechanics relevant to common git sticking points,
 [^3]: Sometimes referred to as the "index".
 
 ---
-# The Meta-Data
+# commit = content + meta-data
 
 * The final commit object contains a pointer[^4] to the **project snapshot** (the content) and some **meta-data**
 * The meta-data includes the author, the commit message, and pointer(s) to the **parent commit(s)**[^5]
