@@ -5,8 +5,9 @@ slidenumbers: true
 
 ### Clara Bennett
 ### [@csojinb](http://twitter.com/csojinb)
---
-### PyCon 2016
+
+#### follow along:
+#### github.com/csojinb/git-under-the-hood/
 
 ![](images/vasa.jpg)
 
